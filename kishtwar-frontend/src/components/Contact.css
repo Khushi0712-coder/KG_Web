@@ -1,0 +1,228 @@
+/* ===============================
+   Contact Section Layout
+=============================== */
+.contact-row {
+  display: flex;
+  align-items: stretch;
+}
+
+.contact-card {
+  border-radius: 14px;
+  border: none !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative; /* prevent unwanted pseudo elements */
+}
+/* ===============================
+   Contact Info Icons + Text
+=============================== */
+.contact-info-item {
+  display: flex;
+  align-items: flex-start; /* icon top align ho */
+  gap: 14px; /* icon aur text ke beech space */
+  margin-bottom: 18px; /* har item ke niche thoda gap */
+}
+
+.contact-info-item img {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0; /* icon chhota/press nahi hoga */
+  margin-top: 2px; /* text ke sath alignment better */
+}
+
+/* Get in Touch icons stable, no blur */
+.contact-info-item img {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  filter: none !important; /* blur hata diya */
+  opacity: 1 !important; /* hamesha clear */
+  transform: none !important; /* zoom off */
+  transition: none !important; /* hover animation off */
+}
+
+/* Hover par bhi stable rahenge */
+.contact-info-item img:hover {
+  filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ✅ Stop "Buy Now" from showing on hover */
+.about-page .card:hover::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Headings */
+.section-heading {
+  color: #000;
+}
+
+.section-subheading {
+  color: #777;
+  font-size: 0.95rem;
+}
+
+/* ===============================
+   Form Styling
+=============================== */
+.form-control,
+.form-select {
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  box-shadow: 0 0 6px rgba(245, 166, 35, 0.4);
+}
+
+/* ===============================
+   Buttons
+=============================== */
+.btn-warning {
+  background: linear-gradient(90deg, #fca311, #ffbb33);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  color: #000;
+}
+
+.btn-warning:hover {
+  background: linear-gradient(90deg, #ffbb33, #fca311);
+  border: none;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #000;
+}
+
+/* ===============================
+   Contact Info Icons
+=============================== */
+.contact-info-icon {
+  font-size: 1.2rem;
+  color: #fca311;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* ===============================
+   Social Icons (stable, no blur/zoom)
+=============================== */
+.contact-social img {
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  transition: none !important; /* remove hover effects */
+}
+
+.contact-social img:hover {
+  transform: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* ===============================
+   Card Hover Behavior
+=============================== */
+/* ✅ Sirf Quick Contact ke cards hover par uthe */
+.quick-contact-section .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ❌ Form aur Get in Touch wali card stable */
+.about-page .contact-row .card {
+  transform: none !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ===============================
+   Social Icons - No Blur / No Hover
+=============================== */
+.contact-social a img,
+.contact-social i {
+  filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* hover par bhi kuch effect nahi hoga */
+.contact-social a img:hover,
+.contact-social i:hover {
+  filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  color: inherit !important; /* icon ke liye */
+}
+
+/* ===============================
+   Quick Contact Section
+=============================== */
+.quick-contact-section h2 {
+  color: #000;
+}
+
+.icon-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ===============================
+   Find Us Section
+=============================== */
+.find-us-section h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #000;
+}
+
+.find-us-section p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.map-container {
+  border: 4px solid #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 1000px;
+  height: 400px;
+}
+
+.map-container iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 12px;
+}
+
+/* ===============================
+   Responsive Tweaks
+=============================== */
+@media (max-width: 768px) {
+  .contact-row {
+    flex-direction: column;
+  }
+
+  .map-container {
+    height: 300px;
+  }
+}

@@ -1,0 +1,271 @@
+/* ------------------------------
+   Global Font
+--------------------------------*/
+* {
+  font-family: "Times New Roman", Times, serif;
+}
+
+/* ------------------------------
+   About Hero Section
+--------------------------------*/
+.about-hero {
+  position: relative;
+  width: 100%;             /* Full width maintained */
+  max-width: 1500px;       /* Container ke equal width */
+  margin: 0 auto;          /* Center align */
+  overflow: hidden;
+  background-size: cover;  /* Horizontally cover */
+  background-position: center;
+  
+  display: flex;
+  flex-direction: column;  /* Content vertically stack ho */
+  align-items: center;
+  justify-content: center;
+
+  padding: 4rem 1rem;      /* Content ke around height adjust */
+  height: auto;            /* ✅ height content ke hisaab se adjust ho */
+}
+
+
+.about-hero .overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.about-hero .container {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+.about-hero h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #e68900;
+  margin: 1rem 0;
+}
+
+.about-hero h3 {
+  font-size: 1.2rem;
+  font-style: italic;
+  color: #f1f1f1;
+}
+
+/* ------------------------------
+   Generations Section
+--------------------------------*/
+.generations-section {
+  background: #f8f5ff;
+  color: #333;
+  padding: 60px 20px;
+  text-align: left;
+}
+
+.generations-section h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #111111c0;
+  margin-bottom: 20px;
+}
+
+.generations-section p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Stats Card */
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 25px 15px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+}
+
+.stat-card h2 {
+  color: #e68900;
+  font-size: 2rem;
+}
+
+.stat-card h5 {
+  color: #111111c0;
+  font-weight: bold;
+}
+
+/* ------------------------------
+   Mission Section
+--------------------------------*/
+.mission-section {
+  background: #fafafa;
+  color: #333;
+  padding: 70px 20px;
+  text-align: center;
+}
+
+.mission-section h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.mission-section p {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #444;
+}
+
+/* Mission Cards */
+.mission-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 30px 20px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.mission-card:hover {
+  transform: translateY(-8px);
+}
+
+.mission-card h5 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.mission-card p {
+  font-size: 17px;
+  margin-top: 10px;
+  color: inherit;
+}
+
+/* Icon Circle */
+.icon-circle {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e68900, purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-circle i {
+  font-size: 32px;
+  color: #fff;
+}
+
+/* ------------------------------
+   Process Section
+--------------------------------*/
+.process-section {
+  background: #f8f5ff;
+  padding: 70px 20px;
+  text-align: center;
+}
+
+.process-section h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.process-section p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 50px;
+}
+
+/* Process Card */
+.process-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.process-card:hover {
+  transform: translateY(-8px);
+}
+
+.process-card h5 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.process-card p {
+  font-size: 17px;
+  margin: 0;
+  color: #111;
+}
+
+
+/* Step Badge */
+.step-badge {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e68900;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ------------------------------
+   Toast Notifications
+--------------------------------*/
+.form-toast {
+  visibility: hidden;
+  min-width: 300px;
+  background-color: #d4edda;
+  color: #155724;
+  text-align: left;
+  border-radius: 6px;
+  padding: 15px 20px;
+  position: fixed;
+  left: 20px;
+  bottom: 30px;
+  z-index: 9999;
+  font-size: 15px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  border-left: 6px solid #28a745;
+  transition: all 0.5s ease;
+}
+
+.form-toast.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(-10px);
+}
+
+.form-toast .close-btn {
+  float: right;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 8px;
+}

@@ -1,0 +1,201 @@
+.reviews-section {
+  background: #fffdeb;
+}
+
+.review-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.review-card p {
+  text-align: left;
+}
+
+.review-card:hover {
+  transform: translateY(-5px);
+  color: #f59e0b;
+  background: white;
+}
+
+.user-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6b21a8, #f59e0b); /* purple + saffron */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.stars {
+  color: #f59e0b; /* saffron for stars */
+  text-align: left;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.verified {
+  color: #6b21a8; /* purple for verified */
+  font-size: 0.9rem;
+  text-align: left;
+  margin-top: 0.5rem;
+}
+
+/* Review Section */
+.review-form-section {
+  padding: 40px 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.review-form-section .card {
+  border: none;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+}
+
+.review-form-section {
+  max-width: 850px;
+  margin: auto;
+  padding: 0 15px;
+  position: relative;
+}
+
+/* Rating Stars */
+.rating-stars i {
+  font-size: 1.8rem;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.3s;
+  margin-right: 6px;
+}
+.rating-stars i.active {
+  color: #e68900; /* gold */
+}
+
+/* Success message (right side notification) */
+.success-msg {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #198754; /* Bootstrap success green */
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: 500;
+  z-index: 1050;
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Or to be safe: prevent hover buttons appearing */
+.reviews-section .card::after,
+.review-form-section .card::after {
+  content: none !important;
+}
+
+.text-start button {
+  background: linear-gradient(to right, purple, #e68900);
+  color: white;
+}
+
+.text-start button:hover {
+  transform: translateY(-8px);
+  background: linear-gradient(to right, #c77dff, #6a0dad);
+  color: #fff;
+  border: none;
+}
+
+.review-box {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+}
+
+.review-card {
+  background-color: #f9f9f9;
+  padding: 15px 20px;
+  border-radius: 12px;
+  height: 100%;
+}
+
+.review-card .stars {
+  color: #ffc107; /* gold stars */
+  margin-bottom: 8px;
+}
+
+.review-card .verified {
+  color: #28a745;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+@media (max-width: 992px) {
+  .review-card {
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .review-card {
+    padding: 12px;
+  }
+}
+/* 
+.review-message {
+  position: fixed;
+  top: 80px;
+  right: -300px; 
+  padding: 15px 25px;
+  color: rgb(78, 75, 75);
+  font-size: large;
+  border-radius: 8px;
+  font-weight: 700;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: right 0.5s ease-in-out;
+}
+
+.review-message.show {
+  right: 20px;
+  opacity: 1;
+}
+
+.review-message.success {
+  background-color: rgba(253, 223, 55, 0.658);
+}
+
+.review-message.error {
+  background-color: #dc3545;
+}
+
+@keyframes slideIn {
+  to {
+    right: 20px;
+  }
+}
+
+@keyframes slideOut {
+  to {
+    right: -350px;
+  }
+}  */

@@ -1,0 +1,146 @@
+.faq-section {
+  padding: 60px 20px;
+  background: #fdfcf7;
+}
+
+.container {
+  max-width: 700px;   /* ✅ narrower width for center alignment */
+  margin: 0 auto;
+}
+
+h2 {
+  margin-bottom: 30px;
+  font-size: 2rem;
+  text-align: center;
+}
+
+/* Accordion */
+.accordion-item {
+  background: #fff;
+  border-radius: 8px;
+  margin: 15px auto;          /* ✅ centers items */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  max-width: 800px;           /* ✅ control width */
+  width: 100%;                /* keeps it responsive */
+}
+
+
+.accordion-header {
+  width: 100%;
+  background: #fff;
+  border: none;
+  text-align: left;
+  padding: 15px 20px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  display: flex;
+  justify-content: space-between; /* ✅ arrow to the right */
+  align-items: center;
+}
+
+.accordion-header::after {
+  content: "\25BC"; /* ▼ clean Unicode arrow */
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.accordion-item.active .accordion-header {
+   background: linear-gradient(to right, #c77dff, #6a0dad);
+  color: white;
+  font-weight: 700;
+}
+
+.accordion-item.active .accordion-header::after {
+  transform: rotate(180deg); /* ✅ rotate when open */
+}
+
+/* Accordion body */
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  background: #fafafa;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #555;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+}
+
+.accordion-item.active .accordion-body {
+  max-height: 300px;
+  padding: 15px 20px;
+}
+
+/* Contact Section */
+.contact-section {
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.contact-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 30px;
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+}
+
+.contact-card h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.contact-card p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.contact-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Golden button */
+.btn-contact {
+  display: inline-block;
+  padding: 12px 25px;
+   background: linear-gradient(to right, #c77dff, #6a0dad);
+  color: #000;
+  font-weight: bold;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-contact:hover {
+  transform: translateY(-2px);
+   background: linear-gradient(to right, #6a0dad, #c77dff);
+}
+
+/* Outline button */
+.btn-outline {
+  display: inline-block;
+  padding: 12px 25px;
+  border: 1.5px solid #6a0dad;
+  color: #000;
+  font-weight: bold;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-outline:hover {
+  background: linear-gradient(to right, rgba(128, 0, 128, 0.692), #e68a00b7);
+    color : white;      
+}
