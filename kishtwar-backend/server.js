@@ -14,11 +14,11 @@ dotenv.config();
 const app = express();
 
 // ----------------------
-// CORS Setup (local + Vercel)
+// CORS Setup
 // ----------------------
 const allowedOrigins = [
-  process.env.VERCEL_FRONTEND, // Vercel frontend
-  process.env.LOCAL_FRONTEND    // Local frontend (Vite default port)
+  process.env.VERCEL_FRONTEND, // e.g., https://your-vercel-app.vercel.app
+  process.env.LOCAL_FRONTEND    // e.g., http://localhost:5173
 ];
 
 app.use(
@@ -30,7 +30,7 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // include OPTIONS for preflight
     credentials: true,
   })
 );

@@ -28,42 +28,43 @@ const Review = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // ✅ Rating validation
-    if (rating === 0) {
-      setRatingError("Please select a rating!");
-      return;
+  // Rating validation
+  if (rating === 0) {
+    setRatingError("Please select a rating!");
+    return;
+  } else {
+    setRatingError("");
+  }
+
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formData.name,
+        location: formData.location,
+        message: formData.review,
+        rating: rating,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      showPopup(data.msg || "Review Submitted Successfully!", false); // green popup
+      setFormData({ name: "", location: "", review: "" });
+      setRating(0);
     } else {
-      setRatingError("");
+      showPopup(data.msg || "Something went wrong", true); // red popup
     }
+  } catch (error) {
+    console.error(error);
+    showPopup("Server error. Please try again later.", true); // red popup
+  }
+};
 
-    try {
-      const res = await fetch("http://localhost:5000/api/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          location: formData.location,
-          message: formData.review,
-          rating: rating,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        showPopup(data.msg || "Review Submitted Successfully!", false); // ✅ green popup
-        setFormData({ name: "", location: "", review: "" });
-        setRating(0);
-      } else {
-        showPopup(data.msg || "Something went wrong", true); // ✅ red popup
-      }
-    } catch (error) {
-      console.error(error);
-      showPopup("Server error. Please try again later.", true); // ✅ red popup
-    }
-  };
 
   return (
     <>
