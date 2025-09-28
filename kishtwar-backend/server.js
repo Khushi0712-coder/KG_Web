@@ -11,48 +11,75 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 dotenv.config();
-
 const app = express();
 
-// Middleware
+// ----------------------
+// CORS Setup (local + Vercel)
+// ----------------------
+const allowedOrigins = [
+  process.env.VERCEL_FRONTEND, // Vercel frontend
+  process.env.LOCAL_FRONTEND    // Local frontend (Vite default port)
+];
+
 app.use(
   cors({
-    origin: "https://www.kishtwargold.com" || process.env.CLIENT_URL, // agar frontend URL pata ho to usko daalo
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
-app.use(express.json());
 
+// ----------------------
+// Middleware
+// ----------------------
+app.use(express.json()); // Parse JSON requests
+
+// ----------------------
+// Routes
+// ----------------------
 app.use("/api/users", userRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/messages", messageRoutes);
 
+// Test API
 app.get("/api", (req, res) => {
   res.send("Backend is up and running 🚀");
 });
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+// ----------------------
+// Serve frontend in production
+// ----------------------
 if (process.env.NODE_ENV === "production") {
-  const clientBuildPath = path.join(__dirname, "../client/build");
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const clientBuildPath = path.join(__dirname, "../kishtwar-frontend/dist"); // Vite build folder
 
-  // Serve static files
   app.use(express.static(clientBuildPath));
 
-  // Fallback route for React
   app.get(/.*/, (req, res) => {
     res.sendFile(path.join(clientBuildPath, "index.html"));
   });
 }
 
-
-
-connectDB();
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-});
+// ----------------------
+// Connect to MongoDB and start server
+// ----------------------
+connectDB()
+  .then(() => {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(
+        `✅ Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+      );
+    });
+  })
+  .catch((err) => {
+    console.error("❌ Failed to connect to MongoDB:", err);
+  });

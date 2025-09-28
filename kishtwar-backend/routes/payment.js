@@ -4,14 +4,14 @@ const paymentSchema = new mongoose.Schema(
   {
     orderId: {
       type: String,
-      required: true,
+      required: [true, "Order ID is required"],
       unique: true,
       trim: true,
     },
     amount: {
       type: Number,
-      required: true,
-      min: 1,
+      required: [true, "Amount is required"],
+      min: [1, "Amount must be at least 1"],
     },
     status: {
       type: String,
@@ -35,7 +35,7 @@ const paymentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Payment =
-  mongoose.models.Payment || mongoose.model("Payment", paymentSchema);
+// Avoid model recompilation errors on hot reload / server restart
+const Payment = mongoose.models.Payment || mongoose.model("Payment", paymentSchema);
 
 export default Payment;
