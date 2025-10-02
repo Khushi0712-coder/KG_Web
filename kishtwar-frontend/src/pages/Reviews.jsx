@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "../components/Review.css";
 import aboutImg from "../assets/Saffron.png";
+import api from "../api";
+
 
 const Review = () => {
   const [rating, setRating] = useState(0);
@@ -30,7 +32,6 @@ const Review = () => {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // Rating validation
   if (rating === 0) {
     setRatingError("Please select a rating!");
     return;
@@ -39,31 +40,25 @@ const Review = () => {
   }
 
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formData.name,
-        location: formData.location,
-        message: formData.review,
-        rating: rating,
-      }),
+    const res = await api.post("/api/reviews", {
+      name: formData.name,
+      location: formData.location,
+      message: formData.review,
+      rating: rating,
     });
 
-    const data = await res.json();
-
-    if (res.ok) {
-      showPopup(data.msg || "Review Submitted Successfully!", false); // green popup
-      setFormData({ name: "", location: "", review: "" });
-      setRating(0);
-    } else {
-      showPopup(data.msg || "Something went wrong", true); // red popup
-    }
+    showPopup(res.data.msg || "Review Submitted Successfully!", false);
+    setFormData({ name: "", location: "", review: "" });
+    setRating(0);
   } catch (error) {
     console.error(error);
-    showPopup("Server error. Please try again later.", true); // red popup
+    showPopup(
+      error.response?.data?.error || "Server error. Please try again later.",
+      true
+    );
   }
 };
+
 
 
   return (

@@ -8,6 +8,8 @@ import saffron2 from "../assets/2nd.jpeg";
 import giftbox from "../assets/giftbox.jpeg";
 import mountain from "../assets/mountain.png";
 import Checkout from "./Checkout";
+import api from "../api";
+
 
 const Home = () => {
   const [showScroll, setShowScroll] = useState(false);
@@ -64,41 +66,39 @@ const Home = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.message) {
-      setPopup({
-        show: true,
-        success: false,
-        text: "All fields are required!",
-      });
-      setTimeout(
-        () => setPopup({ show: false, success: false, text: "" }),
-        3000
-      );
-      return;
+  if (!formData.name || !formData.email || !formData.message) {
+    setPopup({
+      show: true,
+      success: false,
+      text: "All fields are required!",
+    });
+    setTimeout(
+      () => setPopup({ show: false, success: false, text: "" }),
+      3000
+    );
+    return;
+  }
+
+  try {
+    const res = await api.post("/api/messages", formData);
+    if (res.data.success) {
+      setPopup({ show: true, success: true, text: res.data.message });
+      setFormData({ name: "", email: "", message: "" });
     }
+  } catch (error) {
+    setPopup({
+      show: true,
+      success: false,
+      text: error.response?.data?.error || "Server error!",
+    });
+  }
 
-    try {
-      const res = await axios.post(
-        "http://localhost:5000/api/messages",
-        formData
-      );
-      if (res.data.success) {
-        setPopup({ show: true, success: true, text: res.data.message });
-        setFormData({ name: "", email: "", message: "" });
-      }
-    } catch (error) {
-      setPopup({
-        show: true,
-        success: false,
-        text: error.response?.data?.error || "Server error!",
-      });
-    }
+  setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
+};
 
-    setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
-  };
 
   return (
     <div className="page-wrapper">
