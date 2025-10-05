@@ -73,15 +73,15 @@ app.get("/api", (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-if (process.env.NODE_ENV === "production") {
-  const clientBuildPath = path.resolve(__dirname, "../kishtwar-frontend/dist");
-  app.use(express.static(clientBuildPath));
+// if (process.env.NODE_ENV === "production") {
+//   const clientBuildPath = path.resolve(__dirname, "../kishtwar-frontend/dist");
+//   app.use(express.static(clientBuildPath));
 
-  // Catch-all route for React (must be AFTER API routes)
-  app.get(/.*/, (req, res) => {
-    res.sendFile(path.join(clientBuildPath, "index.html"));
-  });
-}
+//   // Catch-all route for React (must be AFTER API routes)
+//   app.get(/.*/, (req, res) => {
+//     res.sendFile(path.join(clientBuildPath, "index.html"));
+//   });
+// }
 
 // =====================
 // Global Error Handler
