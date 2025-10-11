@@ -1,9 +1,58 @@
 import React, { useState } from "react";
 import "../components/Contact.css";
 import aboutImg from "../assets/Saffron.png";
+import api from "../api"; // 👈 added
 
 const Contact = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  // 👇 added form state
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const [popup, setPopup] = useState({ show: false, success: false, text: "" });
+
+  // 👇 handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // 👇 handle form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.full_name || !formData.email || !formData.subject || !formData.message) {
+      setPopup({ show: true, success: false, text: "All fields are required!" });
+      setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
+      return;
+    }
+
+    try {
+      const res = await api.post("/api/messages", {
+        name: formData.full_name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      });
+
+      if (res.data.success) {
+        setPopup({ show: true, success: true, text: res.data.message });
+        setFormData({ full_name: "", email: "", subject: "", message: "" });
+      }
+    } catch (error) {
+      setPopup({
+        show: true,
+        success: false,
+        text: error.response?.data?.error || "Server error!",
+      });
+    }
+
+    setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
+  };
 
   return (
     <div className="about-page">
@@ -39,8 +88,7 @@ const Contact = () => {
                 </p>
                 <form
                   className="d-flex flex-column h-100"
-                  action="https://getform.io/f/bolzrmna"
-                  method="POST"
+                  onSubmit={handleSubmit} // 👈 changed from getform.io
                 >
                   <div className="row g-3">
                     <div className="col-md-6">
@@ -52,7 +100,9 @@ const Contact = () => {
                         name="full_name"
                         className="form-control"
                         placeholder="Enter your full name"
-                        required // 👈 yeh add karo
+                        value={formData.full_name} // 👈 added value
+                        onChange={handleChange}   // 👈 added onChange
+                        required
                       />
                     </div>
                     <div className="col-md-6">
@@ -64,16 +114,22 @@ const Contact = () => {
                         name="email"
                         className="form-control"
                         placeholder="your@email.com"
-                        required // 👈 yeh bhi
+                        value={formData.email}   // 👈 added value
+                        onChange={handleChange} // 👈 added onChange
+                        required
                       />
                     </div>
                   </div>
 
                   <div className="mt-3">
                     <label className="form-label fw-semibold">Subject</label>
-                    <select className="form-select" required name="subject">
-                      {" "}
-                      {/* 👈 yeh bhi */}
+                    <select
+                      className="form-select"
+                      required
+                      name="subject"
+                      value={formData.subject} // 👈 added value
+                      onChange={handleChange}  // 👈 added onChange
+                    >
                       <option value="">Select a subject</option>
                       <option value="order">Bulk Order</option>
                       <option value="inquiry">Product Inquiry</option>
@@ -88,7 +144,9 @@ const Contact = () => {
                       name="message"
                       rows="5"
                       placeholder="How can we help you?"
-                      required // 👈 yeh bhi
+                      value={formData.message}   // 👈 added value
+                      onChange={handleChange}    // 👈 added onChange
+                      required
                     ></textarea>
                   </div>
 
@@ -97,6 +155,13 @@ const Contact = () => {
                       <i className="bi bi-send me-2"></i> Send Message
                     </button>
                   </div>
+
+                  {/* 👇 Popup */}
+                  {popup.show && (
+                    <div className={`popup-message ${popup.success ? "success" : "error"} show`}>
+                      {popup.text}
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
