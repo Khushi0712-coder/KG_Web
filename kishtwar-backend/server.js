@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
@@ -27,30 +26,42 @@ connectDB()
 // =====================
 // Middleware
 // =====================
-// Logging (optional for production)
 app.use(morgan("dev"));
-
-// Body parser
 app.use(express.json());
 
-// CORS setup
+// =====================
+// CORS Setup
+// =====================
 const allowedOrigins = [
-  process.env.LOCAL_FRONTEND,   // http://localhost:5173
-  process.env.FRONTEND_URL,     // Vercel preview
-  process.env.CLIENT_URL,       // Custom domain
+  process.env.LOCAL_FRONTEND,
+  process.env.FRONTEND_URL,
+  process.env.CLIENT_URL,
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Postman / server requests
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error("Not allowed by CORS"));
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // server-to-server or Postman
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    console.log("Blocked CORS request from:", origin);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+};
+
+// ✅ Apply CORS globally
+app.use(cors(corsOptions));
+
+// ✅ Preflight OPTIONS handler for all API routes
+app.use("/api", (req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", allowedOrigins.join(","));
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // =====================
 // API Routes
@@ -68,7 +79,7 @@ app.get("/api", (req, res) => {
 });
 
 // =====================
-// Serve React Frontend in Production (Optional for Vercel frontend)
+// Serve React Frontend (optional)
 // =====================
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -76,8 +87,6 @@ const __dirname = path.dirname(__filename);
 // if (process.env.NODE_ENV === "production") {
 //   const clientBuildPath = path.resolve(__dirname, "../kishtwar-frontend/dist");
 //   app.use(express.static(clientBuildPath));
-
-//   // Catch-all route for React (must be AFTER API routes)
 //   app.get(/.*/, (req, res) => {
 //     res.sendFile(path.join(clientBuildPath, "index.html"));
 //   });
