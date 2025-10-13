@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../components/Home.css";
 import heroImg from "../assets/Saffron.png";
@@ -10,23 +10,18 @@ import mountain from "../assets/mountain.png";
 import Checkout from "./Checkout";
 import api from "../api";
 
-
 const Home = () => {
   const [showScroll, setShowScroll] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
-
   const [cart, setCart] = useState([]);
   const [showCheckout, setShowCheckout] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState(1);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [popup, setPopup] = useState({ show: false, success: false, text: "" });
 
+  const navigate = useNavigate();
+
+  // ✅ Scroll to top button
   useEffect(() => {
     const handleScroll = () => setShowScroll(window.scrollY > 300);
     window.addEventListener("scroll", handleScroll);
@@ -37,68 +32,41 @@ const Home = () => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const faqData = [
-    {
-      question: "How to identify pure saffron?",
-      answer:
-        "Pure saffron has a distinctive aroma, deep red color, and when soaked in water, it releases a golden yellow color slowly. Our Kishtwar saffron is GI-tagged and comes with authenticity certificates.",
-    },
-    {
-      question: "How to store saffron properly?",
-      answer:
-        "Store saffron in an airtight container away from direct sunlight and moisture to maintain its aroma and color for a long time.",
-    },
-    {
-      question: "Do you ship internationally?",
-      answer:
-        "Yes, we ship our saffron globally with proper packaging and certification to ensure freshness and authenticity upon delivery.",
-    },
-  ];
-
   const nextStep = () => setCheckoutStep((prev) => Math.min(prev + 1, 3));
   const prevStep = () => setCheckoutStep((prev) => Math.max(prev - 1, 1));
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  // ✅ Contact form submission with redirect
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!formData.name || !formData.email || !formData.message) {
-    setPopup({
-      show: true,
-      success: false,
-      text: "All fields are required!",
-    });
-    setTimeout(
-      () => setPopup({ show: false, success: false, text: "" }),
-      3000
-    );
-    return;
-  }
-
-  try {
-    const res = await api.post("/api/messages", formData);
-    if (res.data.success) {
-      setPopup({ show: true, success: true, text: res.data.message });
-      setFormData({ name: "", email: "", message: "" });
+    if (!formData.name || !formData.email || !formData.message) {
+      setPopup({ show: true, success: false, text: "All fields are required!" });
+      setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
+      return;
     }
-  } catch (error) {
-    setPopup({
-      show: true,
-      success: false,
-      text: error.response?.data?.error || "Server error!",
-    });
-  }
 
-  setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
-};
+    try {
+      const res = await api.post("/api/messages", formData);
+      if (res.data.success) {
+        // ✅ Redirect to Success Page with message
+       navigate("/success", { state: { message: "Message sent successfully!" } });
 
+        // Clear form data
+        setFormData({ name: "", email: "", message: "" });
+      }
+    } catch (error) {
+      setPopup({
+        show: true,
+        success: false,
+        text: error.response?.data?.error || "Server error!",
+      });
+      setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
+    }
+  };
 
   return (
     <div className="page-wrapper">
@@ -205,7 +173,15 @@ const Home = () => {
         </div>
       </section>
 
-      <Checkout showCheckout={showCheckout} setShowCheckout={setShowCheckout} checkoutStep={checkoutStep} nextStep={nextStep} prevStep={prevStep} setCart={setCart} />
+      {/* Checkout Component */}
+      <Checkout
+        showCheckout={showCheckout}
+        setShowCheckout={setShowCheckout}
+        checkoutStep={checkoutStep}
+        nextStep={nextStep}
+        prevStep={prevStep}
+        setCart={setCart}
+      />
 
       {/* Contact Section */}
       <section className="contact-section py-5">
@@ -222,13 +198,37 @@ const Home = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="row g-3">
                     <div className="col-md-6">
-                      <input type="text" name="name" placeholder="Your Name" className="form-control" value={formData.name} onChange={handleChange} required />
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Your Name"
+                        className="form-control"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                      />
                     </div>
                     <div className="col-md-6">
-                      <input type="email" name="email" placeholder="Your Email" className="form-control" value={formData.email} onChange={handleChange} required />
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Your Email"
+                        className="form-control"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                      />
                     </div>
                     <div className="col-12">
-                      <textarea rows="4" name="message" placeholder="Your Message" className="form-control" value={formData.message} onChange={handleChange} required></textarea>
+                      <textarea
+                        rows="4"
+                        name="message"
+                        placeholder="Your Message"
+                        className="form-control"
+                        value={formData.message}
+                        onChange={handleChange}
+                        required
+                      ></textarea>
                     </div>
                     <div className="col-12 text-end">
                       <button type="submit" className="btn send-btn">
@@ -239,7 +239,9 @@ const Home = () => {
                 </form>
 
                 {popup.show && (
-                  <div className={`popup-message ${popup.success ? "success" : "error"} show`}>
+                  <div
+                    className={`popup-message ${popup.success ? "success" : "error"} show`}
+                  >
                     {popup.text}
                   </div>
                 )}

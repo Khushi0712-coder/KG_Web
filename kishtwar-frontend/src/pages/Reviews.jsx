@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../components/Review.css";
 import aboutImg from "../assets/Saffron.png";
 import api from "../api";
-
+import { useNavigate } from "react-router-dom";
 
 const Review = () => {
   const [rating, setRating] = useState(0);
@@ -13,53 +13,43 @@ const Review = () => {
     review: "",
   });
   const [ratingError, setRatingError] = useState("");
-  const [message, setMessage] = useState("");
-  const [showMessage, setShowMessage] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const navigate = useNavigate();
 
+  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Function to show side popup message
-  const showPopup = (msg, error = false) => {
-    setMessage(msg);
-    setIsError(error);
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 3000); // popup disappear after 3s
-  };
-
+  // Handle submit
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (rating === 0) {
-    setRatingError("Please select a rating!");
-    return;
-  } else {
-    setRatingError("");
-  }
+    if (rating === 0) {
+      setRatingError("Please select a rating!");
+      return;
+    } else {
+      setRatingError("");
+    }
 
-  try {
-    const res = await api.post("/api/reviews", {
-      name: formData.name,
-      location: formData.location,
-      message: formData.review,
-      rating: rating,
-    });
+    try {
+      const res = await api.post("/api/reviews", {
+        name: formData.name,
+        location: formData.location,
+        message: formData.review,
+        rating: rating,
+      });
 
-    showPopup(res.data.msg || "Review Submitted Successfully!", false);
-    setFormData({ name: "", location: "", review: "" });
-    setRating(0);
-  } catch (error) {
-    console.error(error);
-    showPopup(
-      error.response?.data?.error || "Server error. Please try again later.",
-      true
-    );
-  }
-};
+      // ✅ Redirect to Success Page with custom message
+      navigate("/success", { state: { message: "Thank you for your feedback!" } });
 
-
+      // Reset form after submission
+      setFormData({ name: "", location: "", review: "" });
+      setRating(0);
+    } catch (error) {
+      console.error(error);
+      alert("Server error. Please try again later.");
+    }
+  };
 
   return (
     <>
@@ -79,148 +69,146 @@ const Review = () => {
 
       {/* Existing Reviews Section */}
       <section className="reviews-section py-5">
-  <div className="container">
-    <h2 className="text-center mb-4 fw-bold">What Our Customers Say</h2>
+        <div className="container">
+          <h2 className="text-center mb-4 fw-bold">What Our Customers Say</h2>
 
-    {/* Unified review box */}
-    <div className="review-box p-4 shadow rounded-4">
-      <div className="row g-4">
-        {/* Review 1 */}
-        <div className="col-lg-4 col-md-6">
-          <div className="review-card">
-            <div className="d-flex align-items-center mb-3">
-              <div className="user-icon">
-                <i className="fas fa-user fs-4"></i>
+          <div className="review-box p-4 shadow rounded-4">
+            <div className="row g-4">
+              {/* Review 1 */}
+              <div className="col-lg-4 col-md-6">
+                <div className="review-card">
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="user-icon">
+                      <i className="fas fa-user fs-4"></i>
+                    </div>
+                    <div className="ms-3 text-start">
+                      <h5 className="mb-0 fw-bold">Rahul Gupta</h5>
+                      <small className="text-muted">Delhi</small>
+                    </div>
+                  </div>
+                  <div className="stars">★★★★★</div>
+                  <p className="text-muted">
+                    "Great aroma, fast delivery. Will definitely order again."
+                  </p>
+                  <p className="verified">
+                    <i className="fas fa-check-circle"></i> Verified Purchase
+                  </p>
+                </div>
               </div>
-              <div className="ms-3 text-start">
-                <h5 className="mb-0 fw-bold">Rahul Gupta</h5>
-                <small className="text-muted">Delhi</small>
+
+              {/* Review 2 */}
+              <div className="col-lg-4 col-md-6">
+                <div className="review-card">
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="user-icon">
+                      <i className="fas fa-user fs-4"></i>
+                    </div>
+                    <div className="ms-3 text-start">
+                      <h5 className="mb-0 fw-bold">Priya Patel</h5>
+                      <small className="text-muted">Ahmedabad</small>
+                    </div>
+                  </div>
+                  <div className="stars">★★★★★</div>
+                  <p className="text-muted">
+                    "Authentic Kashmiri saffron. Perfect for special occasions."
+                  </p>
+                  <p className="verified">
+                    <i className="fas fa-check-circle"></i> Verified Purchase
+                  </p>
+                </div>
+              </div>
+
+              {/* Review 3 */}
+              <div className="col-lg-4 col-md-6">
+                <div className="review-card">
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="user-icon">
+                      <i className="fas fa-user fs-4"></i>
+                    </div>
+                    <div className="ms-3 text-start">
+                      <h5 className="mb-0 fw-bold">Meera Singh</h5>
+                      <small className="text-muted">Bangalore</small>
+                    </div>
+                  </div>
+                  <div className="stars">★★★★★</div>
+                  <p className="text-muted">
+                    "The quality is exceptional! I’ve been using saffron for years, and this is by far the best I’ve tried."
+                  </p>
+                  <p className="verified">
+                    <i className="fas fa-check-circle"></i> Verified Purchase
+                  </p>
+                </div>
+              </div>
+
+              {/* Review 4 */}
+              <div className="col-lg-4 col-md-6">
+                <div className="review-card">
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="user-icon">
+                      <i className="fas fa-user fs-4"></i>
+                    </div>
+                    <div className="ms-3 text-start">
+                      <h5 className="mb-0 fw-bold">Chef Vikram</h5>
+                      <small className="text-muted">Pune</small>
+                    </div>
+                  </div>
+                  <div className="stars">★★★★★</div>
+                  <p className="text-muted">
+                    "As a professional chef, I demand the best ingredients. Kishtwar Gold delivers authentic saffron that elevates every dish."
+                  </p>
+                  <p className="verified">
+                    <i className="fas fa-check-circle"></i> Verified Purchase
+                  </p>
+                </div>
+              </div>
+
+              {/* Review 5 */}
+              <div className="col-lg-4 col-md-6">
+                <div className="review-card">
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="user-icon">
+                      <i className="fas fa-user fs-4"></i>
+                    </div>
+                    <div className="ms-3 text-start">
+                      <h5 className="mb-0 fw-bold">Anjali Mehta</h5>
+                      <small className="text-muted">Chennai</small>
+                    </div>
+                  </div>
+                  <div className="stars">★★★★☆</div>
+                  <p className="text-muted">
+                    "Perfect for special occasions. The packaging is elegant and the saffron quality is outstanding. Highly recommended!"
+                  </p>
+                  <p className="verified">
+                    <i className="fas fa-check-circle"></i> Verified Purchase
+                  </p>
+                </div>
+              </div>
+
+              {/* Review 6 */}
+              <div className="col-lg-4 col-md-6">
+                <div className="review-card">
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="user-icon">
+                      <i className="fas fa-user fs-4"></i>
+                    </div>
+                    <div className="ms-3 text-start">
+                      <h5 className="mb-0 fw-bold">Neha Sharma</h5>
+                      <small className="text-muted">Mumbai</small>
+                    </div>
+                  </div>
+                  <div className="stars">★★★★★</div>
+                  <p className="text-muted">
+                    "Amazing fragrance and purity! This saffron is unmatched."
+                  </p>
+                  <p className="verified">
+                    <i className="fas fa-check-circle"></i> Verified Purchase
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="stars">★★★★★</div>
-            <p className="text-muted">
-              "Great aroma, fast delivery. Will definitely order again."
-            </p>
-            <p className="verified">
-              <i className="fas fa-check-circle"></i> Verified Purchase
-            </p>
           </div>
         </div>
-
-        {/* Review 2 */}
-        <div className="col-lg-4 col-md-6">
-          <div className="review-card">
-            <div className="d-flex align-items-center mb-3">
-              <div className="user-icon">
-                <i className="fas fa-user fs-4"></i>
-              </div>
-              <div className="ms-3 text-start">
-                <h5 className="mb-0 fw-bold">Priya Patel</h5>
-                <small className="text-muted">Ahmedabad</small>
-              </div>
-            </div>
-            <div className="stars">★★★★★</div>
-            <p className="text-muted">
-              "Authentic Kashmiri saffron. Perfect for special occasions."
-            </p>
-            <p className="verified">
-              <i className="fas fa-check-circle"></i> Verified Purchase
-            </p>
-          </div>
-        </div>
-
-        {/* Review 3 */}
-        <div className="col-lg-4 col-md-6">
-          <div className="review-card">
-            <div className="d-flex align-items-center mb-3">
-              <div className="user-icon">
-                <i className="fas fa-user fs-4"></i>
-              </div>
-              <div className="ms-3 text-start">
-                <h5 className="mb-0 fw-bold">Meera Singh</h5>
-                <small className="text-muted">Bangalore</small>
-              </div>
-            </div>
-            <div className="stars">★★★★★</div>
-            <p className="text-muted">
-              "The quality is exceptional! I’ve been using saffron for years, and this is by far the best I’ve tried."
-            </p>
-            <p className="verified">
-              <i className="fas fa-check-circle"></i> Verified Purchase
-            </p>
-          </div>
-        </div>
-
-        {/* Review 4 */}
-        <div className="col-lg-4 col-md-6">
-          <div className="review-card">
-            <div className="d-flex align-items-center mb-3">
-              <div className="user-icon">
-                <i className="fas fa-user fs-4"></i>
-              </div>
-              <div className="ms-3 text-start">
-                <h5 className="mb-0 fw-bold">Chef Vikram</h5>
-                <small className="text-muted">Pune</small>
-              </div>
-            </div>
-            <div className="stars">★★★★★</div>
-            <p className="text-muted">
-              "As a professional chef, I demand the best ingredients. Kishtwar Gold delivers authentic saffron that elevates every dish."
-            </p>
-            <p className="verified">
-              <i className="fas fa-check-circle"></i> Verified Purchase
-            </p>
-          </div>
-        </div>
-
-        {/* Review 5 */}
-        <div className="col-lg-4 col-md-6">
-          <div className="review-card">
-            <div className="d-flex align-items-center mb-3">
-              <div className="user-icon">
-                <i className="fas fa-user fs-4"></i>
-              </div>
-              <div className="ms-3 text-start">
-                <h5 className="mb-0 fw-bold">Anjali Mehta</h5>
-                <small className="text-muted">Chennai</small>
-              </div>
-            </div>
-            <div className="stars">★★★★☆</div>
-            <p className="text-muted">
-              "Perfect for special occasions. The packaging is elegant and the saffron quality is outstanding. Highly recommended!"
-            </p>
-            <p className="verified">
-              <i className="fas fa-check-circle"></i> Verified Purchase
-            </p>
-          </div>
-        </div>
-
-        {/* Review 6 */}
-        <div className="col-lg-4 col-md-6">
-          <div className="review-card">
-            <div className="d-flex align-items-center mb-3">
-              <div className="user-icon">
-                <i className="fas fa-user fs-4"></i>
-              </div>
-              <div className="ms-3 text-start">
-                <h5 className="mb-0 fw-bold">Neha Sharma</h5>
-                <small className="text-muted">Mumbai</small>
-              </div>
-            </div>
-            <div className="stars">★★★★★</div>
-            <p className="text-muted">
-              "Amazing fragrance and purity! This saffron is unmatched."
-            </p>
-            <p className="verified">
-              <i className="fas fa-check-circle"></i> Verified Purchase
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
+      </section>
 
       {/* Review Form Section */}
       <section className="review-form-section my-5">
@@ -271,14 +259,13 @@ const Review = () => {
                     }`}
                     onClick={() => {
                       setRating(star);
-                      setRatingError(""); // clear error when user selects rating
+                      setRatingError("");
                     }}
                     onMouseEnter={() => setHover(star)}
                     onMouseLeave={() => setHover(0)}
                   ></i>
                 ))}
               </div>
-              {/* Inline rating error */}
               {ratingError && <small className="text-danger">{ratingError}</small>}
             </div>
 
@@ -306,19 +293,9 @@ const Review = () => {
             </div>
           </form>
         </div>
-
-        {/* Side Popup Message */}
-        {showMessage && (
-          <div
-            className={`review-message ${isError ? "error" : "success"} show`}
-          >
-            {message}
-          </div>
-        )}
       </section>
     </>
   );
 };
 
 export default Review;
-

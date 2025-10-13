@@ -3,6 +3,7 @@ import React, { useLayoutEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import SuccessPage from "./pages/SuccessPage";
 
 // ✅ Pages import
 import Home from "./pages/Home";
@@ -26,7 +27,7 @@ function ScrollToTopWrapper({ children }) {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: "auto" // instant scroll
+      behavior: "auto", // instant scroll
     });
   }, [pathname]);
 
@@ -34,14 +35,17 @@ function ScrollToTopWrapper({ children }) {
 }
 
 function AppContent() {
-  const location = useLocation(); // ✅ use to check current route
+  const location = useLocation(); // ✅ to check current route
 
-  // ✅ Hide Navbar and Footer on Privacy, Terms, and Shipping pages
-  const hideNavFooter = [
+  // ✅ Hide Navbar and Footer on these pages
+  const hideNavFooterRoutes = [
     "/privacy-policy",
     "/terms-of-service",
-    "/shipping-policy"
-  ].includes(location.pathname);
+    "/shipping-policy",
+    "/success", // ✅ added success page here
+  ];
+
+  const hideNavFooter = hideNavFooterRoutes.includes(location.pathname);
 
   return (
     <>
@@ -61,6 +65,7 @@ function AppContent() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          <Route path="/success" element={<SuccessPage />} />
         </Routes>
       </main>
 

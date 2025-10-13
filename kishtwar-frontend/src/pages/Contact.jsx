@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "../components/Contact.css";
 import aboutImg from "../assets/Saffron.png";
-import api from "../api"; // 👈 added
+import api from "../api";
+import { useNavigate } from "react-router-dom"; // ✅ for redirect
 
 const Contact = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate(); // ✅ added
 
-  // 👇 added form state
+  // 👇 form state
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -25,14 +27,15 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation
     if (!formData.full_name || !formData.email || !formData.subject || !formData.message) {
-      setPopup({ show: true, success: false, text: "All fields are required!" });
+      setPopup({ show: true, success: false, text: "Please fill all the fields carefully!" });
       setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
       return;
     }
 
     try {
-      const res = await api.post("/api/messages", {
+      const res = await api.post("/api/contact", {
         name: formData.full_name,
         email: formData.email,
         subject: formData.subject,
@@ -40,14 +43,21 @@ const Contact = () => {
       });
 
       if (res.data.success) {
-        setPopup({ show: true, success: true, text: res.data.message });
+        // ✅ Redirect to success page with message
+        navigate("/success", {
+          state: {
+            message: "Thank you for reaching out!",
+          },
+        });
+
+        // Clear form
         setFormData({ full_name: "", email: "", subject: "", message: "" });
       }
     } catch (error) {
       setPopup({
         show: true,
         success: false,
-        text: error.response?.data?.error || "Server error!",
+        text: error.response?.data?.error || "Something went wrong! Please try again later.",
       });
     }
 
@@ -88,34 +98,30 @@ const Contact = () => {
                 </p>
                 <form
                   className="d-flex flex-column h-100"
-                  onSubmit={handleSubmit} // 👈 changed from getform.io
+                  onSubmit={handleSubmit}
                 >
                   <div className="row g-3">
                     <div className="col-md-6">
-                      <label className="form-label fw-semibold">
-                        Your Name
-                      </label>
+                      <label className="form-label fw-semibold">Your Name</label>
                       <input
                         type="text"
                         name="full_name"
                         className="form-control"
                         placeholder="Enter your full name"
-                        value={formData.full_name} // 👈 added value
-                        onChange={handleChange}   // 👈 added onChange
+                        value={formData.full_name}
+                        onChange={handleChange}
                         required
                       />
                     </div>
                     <div className="col-md-6">
-                      <label className="form-label fw-semibold">
-                        Email Address
-                      </label>
+                      <label className="form-label fw-semibold">Email Address</label>
                       <input
                         type="email"
                         name="email"
                         className="form-control"
                         placeholder="your@email.com"
-                        value={formData.email}   // 👈 added value
-                        onChange={handleChange} // 👈 added onChange
+                        value={formData.email}
+                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -127,8 +133,8 @@ const Contact = () => {
                       className="form-select"
                       required
                       name="subject"
-                      value={formData.subject} // 👈 added value
-                      onChange={handleChange}  // 👈 added onChange
+                      value={formData.subject}
+                      onChange={handleChange}
                     >
                       <option value="">Select a subject</option>
                       <option value="order">Bulk Order</option>
@@ -144,8 +150,8 @@ const Contact = () => {
                       name="message"
                       rows="5"
                       placeholder="How can we help you?"
-                      value={formData.message}   // 👈 added value
-                      onChange={handleChange}    // 👈 added onChange
+                      value={formData.message}
+                      onChange={handleChange}
                       required
                     ></textarea>
                   </div>
@@ -156,7 +162,7 @@ const Contact = () => {
                     </button>
                   </div>
 
-                  {/* 👇 Popup */}
+                  {/* Popup */}
                   {popup.show && (
                     <div className={`popup-message ${popup.success ? "success" : "error"} show`}>
                       {popup.text}
