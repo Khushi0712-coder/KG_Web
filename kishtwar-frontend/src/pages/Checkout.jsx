@@ -20,8 +20,6 @@ const Checkout = ({
         return "Customer Info";
       case 2:
         return "Shipping Address";
-      case 3:
-        return "Payment";
       default:
         return "Checkout";
     }
@@ -60,12 +58,6 @@ const Checkout = ({
         return;
       }
     }
-
-    if (checkoutStep === 3 && !paymentMethod) {
-      setError("⚠️ Please select a payment method.");
-      return;
-    }
-
     setError(""); // clear error
     nextStep();
   };
@@ -161,38 +153,6 @@ const Checkout = ({
                 </div>
               )}
 
-              {checkoutStep === 3 && (
-                <div>
-                  <select
-                    className="form-select mb-3"
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                  >
-                    <option value="">Select Payment Method</option>
-                    <option value="card">Credit / Debit Card</option>
-                    <option value="upi">UPI</option>
-                    <option value="cod">Cash on Delivery</option>
-                  </select>
-
-                  {paymentMethod === "card" && (
-                    <div>
-                      <input type="text" className="form-control mb-2" placeholder="Card Number" />
-                      <input type="text" className="form-control mb-2" placeholder="Expiry Date (MM/YY)" />
-                      <input type="text" className="form-control mb-2" placeholder="CVV" />
-                    </div>
-                  )}
-
-                  {paymentMethod === "upi" && (
-                    <div>
-                      <input type="text" className="form-control mb-2" placeholder="Enter UPI ID" />
-                    </div>
-                  )}
-
-                  {paymentMethod === "cod" && (
-                    <p className="text-muted">💵 You will pay in cash upon delivery.</p>
-                  )}
-                </div>
-              )}
             </div>
 
             {/* Footer */}
@@ -202,19 +162,15 @@ const Checkout = ({
                   <b>Previous</b>
                 </button>
               )}
-              {checkoutStep < 3 && (
+              {checkoutStep < 2 && (
                 <button className="btn btn-warning" onClick={handleNext}>
                   <b>Next</b>
                 </button>
               )}
-              {checkoutStep === 3 && (
+              {checkoutStep === 2 && (
                 <button
                   className="btn btn-success"
                   onClick={() => {
-                    if (!paymentMethod) {
-                      setError("⚠️ Please select a payment method.");
-                      return;
-                    }
                     alert("Order placed successfully!");
                     setShowCheckout(false);
                     setCart([]);

@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@cashfreepayments/cashfree-sdk": "^0.1.7",
     "bcryptjs": "^3.0.2",
     "cashfree-pg": "^5.1.0",
     "cashfree-sdk": "^0.1.1",
