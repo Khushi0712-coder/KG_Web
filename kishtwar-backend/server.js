@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/user.js";
-import paymentRoutes from "./routes/payment.js";
 import reviewRoutes from "./routes/review.js";
 import messageRoutes from "./routes/message.js";
 import contactRoutes from "./routes/contact.js"
@@ -68,7 +67,6 @@ app.use("/api", (req, res, next) => {
 // API Routes
 // =====================
 app.use("/api/users", userRoutes);
-app.use("/api/payments", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/contact", contactRoutes);
