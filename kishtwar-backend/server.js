@@ -4,7 +4,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/user.js";
 import reviewRoutes from "./routes/review.js";
 import messageRoutes from "./routes/message.js";
-import contactRoutes from "./routes/contact.js"
+import contactRoutes from "./routes/contact.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
@@ -30,38 +30,36 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 // =====================
-// CORS Setup
+// ✅ CORS Setup (final version)
 // =====================
 const allowedOrigins = [
   process.env.LOCAL_FRONTEND,
   process.env.FRONTEND_URL,
   process.env.CLIENT_URL,
+  "https://www.kishtwargold.com", // your live domain
+  "https://kishtwargold.com",     // optional naked domain
+  "https://kgweb-ashy.vercel.app" // vercel preview (optional)
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // server-to-server or Postman
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    console.log("Blocked CORS request from:", origin);
-    return callback(new Error("Not allowed by CORS"));
+    if (!origin) return callback(null, true); // allow Postman/server
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      console.warn("🚫 Blocked by CORS:", origin);
+      return callback(new Error("Not allowed by CORS"));
+    }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
 
-// ✅ Apply CORS globally
+// ✅ Apply once globally
 app.use(cors(corsOptions));
-
-// ✅ Preflight OPTIONS handler for all API routes
-app.use("/api", (req, res, next) => {
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Origin", allowedOrigins.join(","));
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    return res.sendStatus(200);
-  }
-  next();
-});
+// ✅ Let CORS handle preflight automatically
+app.options("*", cors(corsOptions));
 
 // =====================
 // API Routes
@@ -84,10 +82,11 @@ app.get("/api", (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Uncomment when serving frontend from same server:
 // if (process.env.NODE_ENV === "production") {
 //   const clientBuildPath = path.resolve(__dirname, "../kishtwar-frontend/dist");
 //   app.use(express.static(clientBuildPath));
-//   app.get(/.*/, (req, res) => {
+//   app.get("*", (req, res) => {
 //     res.sendFile(path.join(clientBuildPath, "index.html"));
 //   });
 // }
