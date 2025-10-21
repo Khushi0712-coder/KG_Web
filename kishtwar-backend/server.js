@@ -30,21 +30,27 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 // =====================
-// ✅ CORS Setup (final version)
+// ✅ CORS Setup (Render-safe)
 // =====================
 const allowedOrigins = [
   process.env.LOCAL_FRONTEND,
   process.env.FRONTEND_URL,
-  process.env.CLIENT_URL,
-  "https://www.kishtwargold.com", // your live domain
-  "https://kishtwargold.com",     // optional naked domain
-  "https://kgweb-ashy.vercel.app" // vercel preview (optional)
-];
+  process.env.LIVE_FRONTEND,
+  process.env.LIVE_FRONTEND_NOWWW,
+  "https://kgweb-ashy.vercel.app"
+].filter(Boolean); // remove any undefined values
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow Postman/server
-    if (allowedOrigins.includes(origin)) {
+    console.log("Request Origin:", origin); // log for debugging
+
+    // allow requests from Postman/server (no origin)
+    if (!origin) return callback(null, true);
+
+    // remove trailing slash for safety
+    const cleanedOrigin = origin.replace(/\/$/, "");
+
+    if (allowedOrigins.includes(cleanedOrigin)) {
       return callback(null, true);
     } else {
       console.warn("🚫 Blocked by CORS:", origin);
@@ -53,12 +59,13 @@ const corsOptions = {
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
+  credentials: true, // allow cookies/auth if needed
 };
 
-// ✅ Apply once globally
+// Apply CORS globally
 app.use(cors(corsOptions));
-// ✅ Let CORS handle preflight automatically
+
+// Handle preflight OPTIONS requests
 app.options("*", cors(corsOptions));
 
 // =====================
@@ -82,7 +89,7 @@ app.get("/api", (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Uncomment when serving frontend from same server:
+// Uncomment below if serving frontend from same server
 // if (process.env.NODE_ENV === "production") {
 //   const clientBuildPath = path.resolve(__dirname, "../kishtwar-frontend/dist");
 //   app.use(express.static(clientBuildPath));
