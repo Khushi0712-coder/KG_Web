@@ -1,29 +1,32 @@
+// utils/mailer.js
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-// Check environment variables
-if (!process.env.ZOHO_EMAIL || !process.env.ZOHO_APP_PASSWORD) {
-  throw new Error("❌ ZOHO_EMAIL and ZOHO_APP_PASSWORD must be defined in .env");
-}
-
-// Create transporter
-export const mailTransporter = nodemailer.createTransport({
-  host: "smtp.zoho.com",
-  port: 465,          // SSL port
-  secure: true,
+const transporter = nodemailer.createTransport({
+  host: process.env.ZOHO_SMTP_HOST,
+  port: Number(process.env.ZOHO_SMTP_PORT),
+  secure: true, // SSL
   auth: {
     user: process.env.ZOHO_EMAIL,
-    pass: process.env.ZOHO_APP_PASSWORD, // Use Zoho App Password
+    pass: process.env.ZOHO_APP_PASSWORD,
   },
+  tls: { rejectUnauthorized: false }, // Important to avoid connection issues
 });
 
-// Verify connection (only for startup / debugging)
-mailTransporter.verify((err, success) => {
-  if (err) {
-    console.error("❌ Nodemailer connection error:", err);
-  } else {
-    console.log("✅ Nodemailer is ready to send emails");
+export const sendMail = async ({ to, subject, text, html }) => {
+  try {
+    const info = await transporter.sendMail({
+      from: `"Kishtwar Gold" <${process.env.ZOHO_EMAIL}>`,
+      to,
+      subject,
+      text,
+      html,
+    });
+    console.log("✅ Email sent:", info.messageId);
+  } catch (error) {
+    console.error("❌ Email error:", error);
+    throw error;
   }
-});
+};
