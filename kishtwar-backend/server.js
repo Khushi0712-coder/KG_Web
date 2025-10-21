@@ -4,7 +4,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/user.js";
 import reviewRoutes from "./routes/review.js";
 import messageRoutes from "./routes/message.js";
-import contactRoutes from "./routes/contact.js";
+import contactRoutes from "./routes/contact.js"
 import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
@@ -30,43 +30,40 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 // =====================
-// ✅ CORS Setup (Render-safe)
+// CORS Setup
 // =====================
 const allowedOrigins = [
   process.env.LOCAL_FRONTEND,
   process.env.FRONTEND_URL,
+  process.env.CLIENT_URL,
   process.env.LIVE_FRONTEND,
   process.env.LIVE_FRONTEND_NOWWW,
-  "https://kgweb-ashy.vercel.app"
-].filter(Boolean); // remove any undefined values
+];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    console.log("Request Origin:", origin); // log for debugging
-
-    // allow requests from Postman/server (no origin)
-    if (!origin) return callback(null, true);
-
-    // remove trailing slash for safety
-    const cleanedOrigin = origin.replace(/\/$/, "");
-
-    if (allowedOrigins.includes(cleanedOrigin)) {
-      return callback(null, true);
-    } else {
-      console.warn("🚫 Blocked by CORS:", origin);
-      return callback(new Error("Not allowed by CORS"));
-    }
+    if (!origin) return callback(null, true); // server-to-server or Postman
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    console.log("Blocked CORS request from:", origin);
+    return callback(new Error("Not allowed by CORS"));
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, // allow cookies/auth if needed
+  credentials: true,
 };
 
-// Apply CORS globally
+// ✅ Apply CORS globally
 app.use(cors(corsOptions));
 
-// Handle preflight OPTIONS requests
-app.options("/*", cors(corsOptions));
+// ✅ Preflight OPTIONS handler for all API routes
+app.use("/api", (req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", allowedOrigins.join(","));
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // =====================
 // API Routes
@@ -89,11 +86,10 @@ app.get("/api", (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Uncomment below if serving frontend from same server
 // if (process.env.NODE_ENV === "production") {
 //   const clientBuildPath = path.resolve(__dirname, "../kishtwar-frontend/dist");
 //   app.use(express.static(clientBuildPath));
-//   app.get("*", (req, res) => {
+//   app.get(/.*/, (req, res) => {
 //     res.sendFile(path.join(clientBuildPath, "index.html"));
 //   });
 // }
