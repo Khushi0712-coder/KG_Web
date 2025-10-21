@@ -34,6 +34,9 @@
 
 import nodemailer from "nodemailer";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 const transporter = nodemailer.createTransport({
   host: process.env.ZOHO_SMTP_HOST,
   port: Number(process.env.ZOHO_SMTP_PORT) || 587, // TLS
