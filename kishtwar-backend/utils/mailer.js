@@ -35,15 +35,15 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: process.env.ZOHO_SMTP_HOST, // smtp.zoho.in
-  port: Number(process.env.ZOHO_SMTP_PORT) || 587, // TLS port
-  secure: false, // TLS, not SSL
+  host: process.env.ZOHO_SMTP_HOST,
+  port: Number(process.env.ZOHO_SMTP_PORT) || 587, // TLS
+  secure: false, // use TLS
   auth: {
     user: process.env.ZOHO_EMAIL,
-    pass: process.env.ZOHO_APP_PASSWORD, // app-specific password
+    pass: process.env.ZOHO_APP_PASSWORD,
   },
   tls: {
-    rejectUnauthorized: false, // allows cloud hosts to connect
+    rejectUnauthorized: false, // allow cloud connections
   },
 });
 
