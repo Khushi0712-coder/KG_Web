@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { load } from "@cashfreepayments/cashfree-js";
 import "../components/Checkout.css";
 
 const Checkout = ({
@@ -9,8 +10,15 @@ const Checkout = ({
   prevStep,
   setCart,
 }) => {
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [error, setError] = useState(""); // ✅ validation error message
+  const [error, setError] = useState("");
+  const [customerInfo, setCustomerInfo] = useState({ phone: "", email: "" });
+  const [address, setAddress] = useState({
+    fullName: "",
+    area: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
 
   if (!showCheckout) return null;
 
@@ -20,51 +28,72 @@ const Checkout = ({
         return "Customer Info";
       case 2:
         return "Shipping Address";
+      case 3:
+        return "Make Payment";
       default:
         return "Checkout";
     }
   };
 
-  // ✅ Validation Function
+  // ✅ Validation
   const handleNext = () => {
     if (checkoutStep === 1) {
-      const phone = document.querySelector('input[type="tel"]').value.trim();
-      const email = document.querySelector('input[type="email"]').value.trim();
-      if (!phone || !email) {
+      if (!customerInfo.phone || !customerInfo.email) {
         setError("⚠️ Please enter mobile number and email.");
         return;
       }
     }
 
     if (checkoutStep === 2) {
-      const fullName = document
-        .querySelector('input[placeholder="Full Name"]')
-        .value.trim();
-      const area = document
-        .querySelector('input[placeholder="Area / Locality"]')
-        .value.trim();
-      const city = document
-        .querySelector('input[placeholder="City"]')
-        .value.trim();
-      const state = document
-        .querySelector('input[placeholder="State"]')
-        .value.trim();
-      const pincode = document
-        .querySelector('input[placeholder="Pincode"]')
-        .value.trim();
-
+      const { fullName, area, city, state, pincode } = address;
       if (!fullName || !area || !city || !state || !pincode) {
         setError("⚠️ Please fill all required address fields.");
         return;
       }
     }
-    setError(""); // clear error
+    setError("");
     nextStep();
+  };
+
+  // ✅ Cashfree Payment Handler
+  const handlePay = async () => {
+    const orderAmount = 499;
+
+    const resp = await fetch("http://localhost:5000/api/payment/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: orderAmount,
+        customer: {
+          customer_id: "CU_" + Date.now(),
+          customer_name: address.fullName || "Customer",
+          customer_email: customerInfo.email,
+          customer_phone: customerInfo.phone,
+        },
+      }),
+    });
+
+    const result = await resp.json();
+
+    if (!result.success) {
+      alert("Payment creation failed");
+      return;
+    }
+
+    const cashfree = await load({ mode: "sandbox" });
+
+    cashfree.checkout({
+      paymentSessionId: result.paymentSessionId,
+      redirectTarget: "_self",
+    })
+    .then((res) => {
+      if (res?.error) alert(res.error.message);
+    });
   };
 
   return (
     <>
-      {/* ✅ Blurred Background */}
+      {/* Background Blur */}
       <div
         className="position-fixed top-0 start-0 w-100 h-100"
         style={{
@@ -74,110 +103,87 @@ const Checkout = ({
         }}
       ></div>
 
-      {/* ✅ Modal */}
+      {/* Modal */}
       <div className="modal fade show d-block" tabIndex="-1" style={{ zIndex: 1050 }}>
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content shadow-lg">
             {/* Header */}
             <div className="modal-header justify-content-center bg-dark text-white">
-              <h5
-                className="modal-title w-100 text-center"
-                style={{ fontWeight: "bold", color: "#e68900" }}
-              >
+              <h5 className="modal-title w-100 text-center" style={{ fontWeight: "bold", color: "#e68900" }}>
                 {getStepTitle()}
               </h5>
               <button
                 type="button"
                 className="btn-close position-absolute end-0 me-3"
                 onClick={() => setShowCheckout(false)}
-                style={{ filter: "invert(1)" }} // ✅ white cross
-              ></button>
+                style={{ filter: "invert(1)" }}
+              />
             </div>
 
             {/* Body */}
             <div className="modal-body">
               {error && <p className="text-danger fw-bold">{error}</p>}
 
+              {/* Step 1 */}
               {checkoutStep === 1 && (
-                <div>
+                <>
                   <div className="d-flex gap-2 mb-3">
                     <select className="form-select w-auto">
                       <option value="+91">+91</option>
-                      <option value="+1">+1</option>
                     </select>
                     <input
                       type="tel"
                       className="form-control"
                       placeholder="Mobile Number"
-                      required
+                      value={customerInfo.phone}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
                     />
                   </div>
                   <input
                     type="email"
                     className="form-control mb-3"
                     placeholder="Email"
-                    required
+                    value={customerInfo.email}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
                   />
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="offersCheck"
-                      defaultChecked
-                    />
-                    <label className="form-check-label" htmlFor="offersCheck">
-                      Send me offers and order updates
-                    </label>
-                  </div>
-                </div>
+                </>
               )}
 
+              {/* Step 2 */}
               {checkoutStep === 2 && (
-                <div>
-                  <input type="text" className="form-control mb-2" placeholder="Full Name" />
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    placeholder="House No. / Building (Optional)"
-                  />
-                  <input type="text" className="form-control mb-2" placeholder="Area / Locality" />
-                  <input type="text" className="form-control mb-2" placeholder="City" />
-                  <input type="text" className="form-control mb-2" placeholder="State" />
-                  <input type="text" className="form-control mb-2" placeholder="Pincode" />
-                  <div className="form-check mt-2">
-                    <input className="form-check-input" type="checkbox" id="saveAddress" />
-                    <label className="form-check-label" htmlFor="saveAddress">
-                      Save my address as default
-                    </label>
-                  </div>
-                </div>
+                <>
+                  <input className="form-control mb-2" placeholder="Full Name"
+                    onChange={(e) => setAddress({ ...address, fullName: e.target.value })} />
+                  <input className="form-control mb-2" placeholder="Area / Locality"
+                    onChange={(e) => setAddress({ ...address, area: e.target.value })} />
+                  <input className="form-control mb-2" placeholder="City"
+                    onChange={(e) => setAddress({ ...address, city: e.target.value })} />
+                  <input className="form-control mb-2" placeholder="State"
+                    onChange={(e) => setAddress({ ...address, state: e.target.value })} />
+                  <input className="form-control mb-2" placeholder="Pincode"
+                    onChange={(e) => setAddress({ ...address, pincode: e.target.value })} />
+                </>
               )}
 
+              {/* Step 3 */}
+              {checkoutStep === 3 && (
+                <div className="text-center">
+                  <h4>Total Payable: <b>₹499</b></h4>
+                  <p>Click below to complete secure payment.</p>
+                  <button className="btn btn-success btn-lg px-4" onClick={handlePay}>
+                    Pay Now
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Footer */}
             <div className="modal-footer">
               {checkoutStep > 1 && (
-                <button className="btn btn-secondary" onClick={prevStep}>
-                  <b>Previous</b>
-                </button>
+                <button className="btn btn-secondary" onClick={prevStep}>Previous</button>
               )}
-              {checkoutStep < 2 && (
-                <button className="btn btn-warning" onClick={handleNext}>
-                  <b>Next</b>
-                </button>
-              )}
-              {checkoutStep === 2 && (
-                <button
-                  className="btn btn-success"
-                  onClick={() => {
-                    alert("Order placed successfully!");
-                    setShowCheckout(false);
-                    setCart([]);
-                  }}
-                >
-                  Place Order
-                </button>
+              {checkoutStep < 3 && (
+                <button className="btn btn-warning" onClick={handleNext}>Next</button>
               )}
             </div>
           </div>
