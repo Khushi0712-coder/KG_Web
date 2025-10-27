@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SuccessPage from "./pages/SuccessPage";
 
+
 // ✅ Pages import
 import Home from "./pages/Home";
 import Products from "./pages/Products";

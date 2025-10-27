@@ -1,59 +1,68 @@
-import React, { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { CheckCircle } from "lucide-react";
 
 const SuccessPage = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [orderStatus, setOrderStatus] = useState("Verifying...");
-  const orderId = searchParams.get("order_id");
-
-  useEffect(() => {
-    const verifyPayment = async () => {
-      if (!orderId) return;
-
-      const res = await fetch("http://localhost:5000/api/payment/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId }),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        setOrderStatus(data.status);
-      } else {
-        setOrderStatus("Verification Failed");
-      }
-    };
-
-    verifyPayment();
-  }, [orderId]);
+  const location = useLocation();
+  const message =
+    location.state?.message || "Your form has been submitted successfully!";
 
   return (
     <div
-      className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh", background: "#111", color: "#fff" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#f0fdf4",
+        textAlign: "center",
+        padding: "20px",
+      }}
     >
-      <div
-        className="text-center p-5 rounded shadow"
-        style={{ background: "#1b1b1b", border: "1px solid #e6a100" }}
+      {/* CheckCircle Icon */}
+      <CheckCircle
+        style={{
+          width: "100px",
+          height: "100px",
+          color: "green",
+          marginBottom: "20px",
+          animation: "scaleUp 0.5s ease-out",
+        }}
+      />
+
+      <h1 style={{ fontSize: "36px", marginBottom: "10px", color: "#166534" }}>
+        Success!
+      </h1>
+      <p style={{ fontSize: "18px", color: "#14532d", marginBottom: "30px" }}>
+        {message}
+      </p>
+      <button
+        onClick={() => navigate("/")} // Go to Home
+        style={{
+          padding: "12px 30px",
+          fontSize: "16px",
+          backgroundColor: "green",
+          color: "#fff",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+          transition: "background-color 0.3s",
+        }}
+        onMouseEnter={(e) => (e.target.style.backgroundColor = "#166534")}
+        onMouseLeave={(e) => (e.target.style.backgroundColor = "green")}
       >
-        <h1 style={{ color: "#e6a100", fontWeight: "bold" }}>🎉 Payment Successful!</h1>
+        Go Home
+      </button>
 
-        <p className="mt-3 mb-1">
-          <b>Order ID:</b> {orderId}
-        </p>
-
-        <p className="mb-4">
-          <b>Status:</b> {orderStatus}
-        </p>
-
-        <button
-          className="btn btn-outline-warning px-4"
-          onClick={() => navigate("/")}
-        >
-          Go to Home
-        </button>
-      </div>
+      {/* CSS Animation */}
+      <style>{`
+        @keyframes scaleUp {
+          0% { transform: scale(0); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 };

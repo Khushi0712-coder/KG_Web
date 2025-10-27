@@ -59,7 +59,7 @@ const Checkout = ({
   const handlePay = async () => {
     const orderAmount = 499;
 
-    const resp = await fetch("http://localhost:5000/api/payment/create", {
+    const resp = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -80,7 +80,8 @@ const Checkout = ({
       return;
     }
 
-    const cashfree = await load({ mode: "sandbox" });
+    // const cashfree = await load({ mode: "sandbox" });
+const cashfree = await load({ mode: import.meta.env.VITE_CASHFREE_MODE });
 
     cashfree.checkout({
       paymentSessionId: result.paymentSessionId,
