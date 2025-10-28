@@ -63,18 +63,20 @@
 //   }
 // }
 
-
 import dotenv from "dotenv";
 dotenv.config();
 
-import CashfreePG from "cashfree-pg";
+import * as Cashfree from "cashfree-pg";
+
+// Set environment
+const envMode = process.env.CASHFREE_ENV === "PROD" ? Cashfree.PRODUCTION : Cashfree.SANDBOX;
 
 // Create Cashfree instance
-const cf = new CashfreePG({
-  env: process.env.CASHFREE_ENV,          // PROD
-  clientId: process.env.CASHFREE_APP_ID,
-  clientSecret: process.env.CASHFREE_SECRET_KEY,
-});
+const cf = new Cashfree.Cashfree(
+  envMode,
+  process.env.CASHFREE_APP_ID,
+  process.env.CASHFREE_SECRET_KEY
+);
 
 // Create Payment Order
 export async function createOrder({ orderId, amount, customer }) {
