@@ -93,3 +93,28 @@
 .btn-secondary:hover {
   background-color: #5a6268;
 }
+
+
+
+
+
+
+
+/* Top error message */
+.error-msg {
+  color: #d06050; /* dark red */
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Input fields with errors */
+.form-control.input-error {
+  border: 1px solid #e08080 !important;   /* dark red border */
+  }
+
+/* Remove error highlight when user focuses on input */
+.form-control.input-error:focus {
+  border: 1px solid #80bdff !important; /* normal bootstrap focus border */
+  background-color: #fff !important;     /* white background */
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* bootstrap focus shadow */
+}

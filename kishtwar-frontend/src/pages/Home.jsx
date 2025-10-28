@@ -16,9 +16,14 @@ const Home = () => {
   const [cart, setCart] = useState([]);
   const [showCheckout, setShowCheckout] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState(1);
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
   const [popup, setPopup] = useState({ show: false, success: false, text: "" });
 
+  const [emailError, setEmailError] = useState("");
   const navigate = useNavigate();
 
   // ✅ Scroll to top button
@@ -43,19 +48,43 @@ const Home = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.message) {
-      setPopup({ show: true, success: false, text: "All fields are required!" });
-      setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    // Trim input values
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const message = formData.message.trim();
+
+    // Reset error
+    setEmailError("");
+
+    // Required fields check
+    if (!name || !email || !message) {
+      setPopup({
+        show: true,
+        success: false,
+        text: "All fields are required!",
+      });
+      setTimeout(
+        () => setPopup({ show: false, success: false, text: "" }),
+        3000
+      );
       return;
     }
 
-    try {
-      const res = await api.post("/api/messages", formData);
-      if (res.data.success) {
-        // ✅ Redirect to Success Page with message
-       navigate("/success", { state: { message: "Message sent successfully!" } });
+    // Email format check
+    if (!emailRegex.test(email)) {
+      setEmailError("⚠️ Please enter a valid email address!");
+      return;
+    }
 
-        // Clear form data
+    // Submit form
+    try {
+      const res = await api.post("/api/messages", { name, email, message });
+      if (res.data.success) {
+        navigate("/success", {
+          state: { message: "Message sent successfully!" },
+        });
         setFormData({ name: "", email: "", message: "" });
       }
     } catch (error) {
@@ -64,7 +93,10 @@ const Home = () => {
         success: false,
         text: error.response?.data?.error || "Server error!",
       });
-      setTimeout(() => setPopup({ show: false, success: false, text: "" }), 3000);
+      setTimeout(
+        () => setPopup({ show: false, success: false, text: "" }),
+        3000
+      );
     }
   };
 
@@ -77,13 +109,17 @@ const Home = () => {
       >
         <div className="overlay"></div>
         <div className="container text-center hero-content">
-          <span className="tagline-badge mb-3">GI TAGGED AUTHENTIC SAFFRON</span>
+          <span className="tagline-badge mb-3">
+            GI TAGGED AUTHENTIC SAFFRON
+          </span>
           <h1 className="main-title">KISHTWAR GOLD</h1>
           <h3 className="sub-title">The Pride of Pure Saffron</h3>
           <p className="hero-text">
-            From the heart of Kishtwar, bringing purity and richness to your life.
+            From the heart of Kishtwar, bringing purity and richness to your
+            life.
             <br />
-            Experience the world’s finest GI-tagged saffron, handpicked by master farmers.
+            Experience the world’s finest GI-tagged saffron, handpicked by
+            master farmers.
           </p>
           <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
             <Link to="/products" style={{ textDecoration: "none" }}>
@@ -108,7 +144,8 @@ const Home = () => {
             </h2>
             <p className="text-muted mb-4">
               Nestled in the pristine valleys of Kishtwar, our saffron fields
-              have been cultivating the world's most precious spice for generations.
+              have been cultivating the world's most precious spice for
+              generations.
             </p>
             <div className="row g-3 mb-4">
               <div className="col-6 col-md-6">
@@ -130,7 +167,11 @@ const Home = () => {
           </div>
           <div className="col-lg-6">
             <div className="rounded-4 overflow-hidden shadow">
-              <img src={mountain} alt="Mountain valley" className="img-fluid w-100" />
+              <img
+                src={mountain}
+                alt="Mountain valley"
+                className="img-fluid w-100"
+              />
             </div>
           </div>
         </div>
@@ -142,22 +183,51 @@ const Home = () => {
           <button className="badge-btn mb-3">Featured Collection</button>
           <h2 className="fw-bold">Premium Saffron Selection</h2>
           <p className="text-muted mb-5">
-            Discover our handpicked collection of premium saffron products, perfect for culinary excellence and gifting.
+            Discover our handpicked collection of premium saffron products,
+            perfect for culinary excellence and gifting.
           </p>
 
           <div className="row g-4">
-            {[{ img: saffron1, title: "Premium Saffron 1g", price: "₹500", desc: "Handpicked premium Kishtwar saffron, 1 gram pack" },
-              { img: saffron2, title: "Premium Saffron 2g", price: "₹950", desc: "Handpicked premium Kishtwar saffron, 2 gram pack" },
-              { img: giftbox, title: "Premium Gift Box 5g", price: "₹2250", desc: "Luxury gift box with 5g premium saffron" }].map((product, index) => (
+            {[
+              {
+                img: saffron1,
+                title: "Premium Saffron 1g",
+                price: "₹500",
+                desc: "Handpicked premium Kishtwar saffron, 1 gram pack",
+              },
+              {
+                img: saffron2,
+                title: "Premium Saffron 2g",
+                price: "₹950",
+                desc: "Handpicked premium Kishtwar saffron, 2 gram pack",
+              },
+              {
+                img: giftbox,
+                title: "Premium Gift Box 5g",
+                price: "₹2250",
+                desc: "Luxury gift box with 5g premium saffron",
+              },
+            ].map((product, index) => (
               <div className="col-md-4" key={index}>
                 <div className="card h-100 shadow-sm border-0 rounded-4">
-                  <img src={product.img} className="card-img-top rounded-top-4" alt={product.title} />
+                  <img
+                    src={product.img}
+                    className="card-img-top rounded-top-4"
+                    alt={product.title}
+                  />
                   <div className="card-body text-start">
                     <h5 className="fw-bold">{product.title}</h5>
                     <p className="text-muted small">{product.desc}</p>
                     <p className="price-tag">{product.price}</p>
                   </div>
-                  <button className="buy-now-overlay" onClick={() => { setCart([{ ...product }]); setShowCheckout(true); setCheckoutStep(1); }}>
+                  <button
+                    className="buy-now-overlay"
+                    onClick={() => {
+                      setCart([{ ...product }]); // set cart with only this product
+                      setShowCheckout(true); // open checkout modal
+                      setCheckoutStep(1); // start from step 1
+                    }}
+                  >
                     <i className="fas fa-shopping-cart"></i> Buy Now
                   </button>
                 </div>
@@ -181,6 +251,10 @@ const Home = () => {
         nextStep={nextStep}
         prevStep={prevStep}
         setCart={setCart}
+        amount={cart.reduce(
+          (sum, item) => sum + parseInt(item.price.replace("₹", "")),
+          0
+        )} // calculate total
       />
 
       {/* Contact Section */}
@@ -190,7 +264,8 @@ const Home = () => {
             <div className="col-lg-6 mb-4 mb-lg-0">
               <h3 className="fw-bold">Send Us a Message</h3>
               <p className="text-muted">
-                Have questions about our saffron? We're here to help you choose the perfect product.
+                Have questions about our saffron? We're here to help you choose
+                the perfect product.
               </p>
             </div>
             <div className="col-lg-6">
@@ -213,11 +288,16 @@ const Home = () => {
                         type="email"
                         name="email"
                         placeholder="Your Email"
-                        className="form-control"
+                        className={`form-control ${
+                          emailError ? "is-invalid" : ""
+                        }`}
                         value={formData.email}
                         onChange={handleChange}
                         required
                       />
+                      {emailError && (
+                        <div className="invalid-feedback">{emailError}</div>
+                      )}
                     </div>
                     <div className="col-12">
                       <textarea
@@ -240,7 +320,9 @@ const Home = () => {
 
                 {popup.show && (
                   <div
-                    className={`popup-message ${popup.success ? "success" : "error"} show`}
+                    className={`popup-message ${
+                      popup.success ? "success" : "error"
+                    } show`}
                   >
                     {popup.text}
                   </div>

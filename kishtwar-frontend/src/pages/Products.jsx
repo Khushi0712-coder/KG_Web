@@ -62,8 +62,7 @@ const Product = () => {
   ];
 
   // ✅ Cart context
-  const { cart, addToCart, clearCart, setCart } = useCart();
-
+  const { cart, addToCart, clearCart } = useCart();
   const navigate = useNavigate();
 
   // ✅ Local UI states
@@ -72,6 +71,13 @@ const Product = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [checkoutStep, setCheckoutStep] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [buyNowProduct, setBuyNowProduct] = useState(null); // <-- new state
+
+  // ✅ Calculate cart total
+  const totalAmount = cart.reduce(
+    (sum, item) => sum + item.price * (item.qty || 1),
+    0
+  );
 
   // ✅ Filter & Sort
   const filteredProducts = productList
@@ -93,9 +99,15 @@ const Product = () => {
     );
   };
 
+  // ✅ Buy Now
   const buyNow = (product) => {
+    setBuyNowProduct(product); // <-- store single product
     setShowCheckout(true);
     setCheckoutStep(1);
+
+    // optional: add to cart if not present
+    const inCart = cart.some((item) => item.id === product.id);
+    if (!inCart) handleAddToCart(product);
   };
 
   const nextStep = () => setCheckoutStep((prev) => Math.min(prev + 1, 3));
@@ -316,6 +328,7 @@ const Product = () => {
             nextStep={nextStep}
             prevStep={prevStep}
             setCart={clearCart}
+            amount={buyNowProduct ? buyNowProduct.price : totalAmount}
           />
         )}
       </section>

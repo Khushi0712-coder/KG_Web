@@ -9,8 +9,10 @@ const Checkout = ({
   nextStep,
   prevStep,
   setCart,
+  amount,
 }) => {
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // single top error message
+  const [errorFields, setErrorFields] = useState([]); // fields with errors
   const [customerInfo, setCustomerInfo] = useState({ phone: "", email: "" });
   const [address, setAddress] = useState({
     fullName: "",
@@ -24,46 +26,66 @@ const Checkout = ({
 
   const getStepTitle = () => {
     switch (checkoutStep) {
-      case 1:
-        return "Customer Info";
-      case 2:
-        return "Shipping Address";
-      case 3:
-        return "Make Payment";
-      default:
-        return "Checkout";
+      case 1: return "Customer Info";
+      case 2: return "Shipping Address";
+      case 3: return "Make Payment";
+      default: return "Checkout";
     }
   };
 
-  // ✅ Validation
+  // Validation & next step
   const handleNext = () => {
+    let tempErrorFields = [];
+    let message = "";
+
     if (checkoutStep === 1) {
-      if (!customerInfo.phone || !customerInfo.email) {
-        setError("⚠️ Please enter mobile number and email.");
-        return;
+      const phoneRegex = /^[0-9]{10}$/;
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+      if (!customerInfo.phone || !phoneRegex.test(customerInfo.phone)) {
+        tempErrorFields.push("phone");
+        message = "⚠️ Please enter a valid 10-digit mobile number.";
+      }
+      if (!customerInfo.email || !emailRegex.test(customerInfo.email)) {
+        tempErrorFields.push("email");
+        if (!message) message = "⚠️ Please enter a valid Gmail address.";
       }
     }
 
     if (checkoutStep === 2) {
       const { fullName, area, city, state, pincode } = address;
-      if (!fullName || !area || !city || !state || !pincode) {
-        setError("⚠️ Please fill all required address fields.");
-        return;
+      const pincodeRegex = /^[0-9]{6}$/;
+
+      if (!fullName) tempErrorFields.push("fullName");
+      if (!area) tempErrorFields.push("area");
+      if (!city) tempErrorFields.push("city");
+      if (!state) tempErrorFields.push("state");
+      if (!pincode || !pincodeRegex.test(pincode)) tempErrorFields.push("pincode");
+
+      if (tempErrorFields.length > 0 && !message) {
+        message = "⚠️ Please fill all required address fields correctly.";
       }
     }
+
+    if (tempErrorFields.length > 0) {
+      setError(message);
+      setErrorFields(tempErrorFields);
+      return;
+    }
+
+    // Clear errors if validation passed
     setError("");
+    setErrorFields([]);
     nextStep();
   };
 
-  // ✅ Cashfree Payment Handler
+  // Cashfree payment
   const handlePay = async () => {
-    const orderAmount = 499;
-
     const resp = await fetch("http://localhost:5000/api/payment/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        amount: orderAmount,
+        amount,
         customer: {
           customer_id: "CU_" + Date.now(),
           customer_name: address.fullName || "Customer",
@@ -80,15 +102,15 @@ const Checkout = ({
       return;
     }
 
-    const cashfree = await load({ mode: "sandbox" });
-
-    cashfree.checkout({
-      paymentSessionId: result.paymentSessionId,
-      redirectTarget: "_self",
-    })
-    .then((res) => {
-      if (res?.error) alert(res.error.message);
-    });
+    const cashfree = await load({ mode: "sandbox" }); // "live" in production
+    cashfree
+      .checkout({
+        paymentSessionId: result.paymentSessionId,
+        redirectTarget: "_self",
+      })
+      .then((res) => {
+        if (res?.error) alert(res.error.message);
+      });
   };
 
   return (
@@ -122,7 +144,7 @@ const Checkout = ({
 
             {/* Body */}
             <div className="modal-body">
-              {error && <p className="text-danger fw-bold">{error}</p>}
+              {error && <p className="error-msg">{error}</p>}
 
               {/* Step 1 */}
               {checkoutStep === 1 && (
@@ -133,7 +155,7 @@ const Checkout = ({
                     </select>
                     <input
                       type="tel"
-                      className="form-control"
+                      className={`form-control ${errorFields.includes("phone") ? "input-error" : ""}`}
                       placeholder="Mobile Number"
                       value={customerInfo.phone}
                       onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
@@ -141,7 +163,7 @@ const Checkout = ({
                   </div>
                   <input
                     type="email"
-                    className="form-control mb-3"
+                    className={`form-control mb-3 ${errorFields.includes("email") ? "input-error" : ""}`}
                     placeholder="Email"
                     value={customerInfo.email}
                     onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
@@ -150,29 +172,49 @@ const Checkout = ({
               )}
 
               {/* Step 2 */}
-              {checkoutStep === 2 && (
-                <>
-                  <input className="form-control mb-2" placeholder="Full Name"
-                    onChange={(e) => setAddress({ ...address, fullName: e.target.value })} />
-                  <input className="form-control mb-2" placeholder="Area / Locality"
-                    onChange={(e) => setAddress({ ...address, area: e.target.value })} />
-                  <input className="form-control mb-2" placeholder="City"
-                    onChange={(e) => setAddress({ ...address, city: e.target.value })} />
-                  <input className="form-control mb-2" placeholder="State"
-                    onChange={(e) => setAddress({ ...address, state: e.target.value })} />
-                  <input className="form-control mb-2" placeholder="Pincode"
-                    onChange={(e) => setAddress({ ...address, pincode: e.target.value })} />
-                </>
-              )}
+              {/* Step 2 */}
+{checkoutStep === 2 && (
+  <>
+    <input
+      className={`form-control mb-2 ${errorFields.includes("fullName") ? "input-error" : ""}`}
+      placeholder="Full Name"
+      value={address.fullName}
+      onChange={(e) => setAddress({ ...address, fullName: e.target.value })}
+    />
+    <input
+      className={`form-control mb-2 ${errorFields.includes("area") ? "input-error" : ""}`}
+      placeholder="Area / Locality"
+      value={address.area}
+      onChange={(e) => setAddress({ ...address, area: e.target.value })}
+    />
+    <input
+      className={`form-control mb-2 ${errorFields.includes("city") ? "input-error" : ""}`}
+      placeholder="City"
+      value={address.city}
+      onChange={(e) => setAddress({ ...address, city: e.target.value })}
+    />
+    <input
+      className={`form-control mb-2 ${errorFields.includes("state") ? "input-error" : ""}`}
+      placeholder="State"
+      value={address.state}
+      onChange={(e) => setAddress({ ...address, state: e.target.value })}
+    />
+    <input
+      className={`form-control mb-2 ${errorFields.includes("pincode") ? "input-error" : ""}`}
+      placeholder="Pincode"
+      value={address.pincode}
+      onChange={(e) => setAddress({ ...address, pincode: e.target.value })}
+    />
+  </>
+)}
+
 
               {/* Step 3 */}
               {checkoutStep === 3 && (
                 <div className="text-center">
-                  <h4>Total Payable: <b>₹499</b></h4>
+                  <h4>Total Payable: <b>₹{amount}</b></h4>
                   <p>Click below to complete secure payment.</p>
-                  <button className="btn btn-success btn-lg px-4" onClick={handlePay}>
-                    Pay Now
-                  </button>
+                  <button className="btn btn-success btn-lg px-4" onClick={handlePay}>Pay Now</button>
                 </div>
               )}
             </div>
