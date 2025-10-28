@@ -66,38 +66,30 @@
 
 
 
+
 import dotenv from "dotenv";
 dotenv.config();
 
 import * as Cashfree from "cashfree-pg";
 
-// ===============================
-// ✅ ENVIRONMENT CONFIGURATION
-// ===============================
+// Determine environment mode
 const envMode =
   process.env.CASHFREE_ENV?.toUpperCase() === "PROD"
     ? Cashfree.PRODUCTION
     : Cashfree.SANDBOX;
 
-// ✅ Initialize Cashfree Client
+// Initialize Cashfree
 const cf = new Cashfree.Cashfree(
   envMode,
   process.env.CASHFREE_APP_ID,
   process.env.CASHFREE_SECRET_KEY
 );
 
-// ===============================
-// ✅ CREATE ORDER FUNCTION
-// ===============================
+// ---------------------------
+// CREATE ORDER FUNCTION
+// ---------------------------
 export async function createOrder({ orderId, amount, customer }) {
   try {
-    console.log("🟢 Using ENV:", process.env.CASHFREE_ENV);
-    console.log("🟢 Cashfree APP_ID:", process.env.CASHFREE_APP_ID);
-    console.log(
-      "🟢 Cashfree SECRET_KEY:",
-      process.env.CASHFREE_SECRET_KEY ? "Loaded ✅" : "Missing ❌"
-    );
-
     const payload = {
       order_amount: Number(amount),
       order_currency: "INR",
@@ -113,33 +105,31 @@ export async function createOrder({ orderId, amount, customer }) {
       },
     };
 
-    // Log payload in non-production only
+    // Log only in dev mode
     if (process.env.CASHFREE_ENV !== "PROD") {
-      console.log("🟢 Cashfree createOrder payload:", payload);
+      console.log("Cashfree createOrder payload:", payload);
     }
 
-    // ✅ Call Cashfree API
     const response = await cf.PGCreateOrder(payload);
 
-    console.log("✅ Cashfree createOrder response:", response.data);
-
+    console.log("Cashfree response:", response.data);
     return response.data;
   } catch (err) {
-    console.error("❌ Cashfree API Error:", err.response?.data || err.message);
+    console.error("Cashfree API Error:", err.response?.data || err.message);
     throw err;
   }
 }
 
-// ===============================
-// ✅ VERIFY ORDER FUNCTION
-// ===============================
+// ---------------------------
+// VERIFY ORDER FUNCTION
+// ---------------------------
 export async function verifyOrder(orderId) {
   try {
     const response = await cf.PGFetchOrder(orderId);
-    console.log("✅ Cashfree verifyOrder response:", response.data);
+    console.log("Cashfree verify response:", response.data);
     return response.data;
   } catch (err) {
-    console.error("❌ Cashfree Verify Error:", err.response?.data || err.message);
+    console.error("Cashfree Verify Error:", err.response?.data || err.message);
     throw err;
   }
 }
