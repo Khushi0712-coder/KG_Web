@@ -31,7 +31,7 @@ const Navbar = () => {
         <Link className="navbar-brand d-flex align-items-center" to="/">
           <img src={logo} alt="Logo" />
           <div className="brand-text d-none d-sm-block">
-            <h5 className="mb-0">KISHTWAR GOLD</h5>
+            <h5 className="mb-0">KISHTWAR BLOOM</h5>
             <p className="tagline">A FARMER&apos;S BRAND</p>
           </div>
         </Link>

@@ -40,7 +40,7 @@ const Footer = () => {
               <img src={logo} alt="Logo" />
             </div>
             <div>
-              <h2>KISHTWAR GOLD</h2>
+              <h2>KISHTWAR BLOOM</h2>
               <p className="tagline">A FARMER&apos;S BRAND</p>
             </div>
           </div>
@@ -156,7 +156,7 @@ const Footer = () => {
 
       {/* Bottom Row */}
       <div className="footer-bottom">
-        <p>© 2025 Kishtwar Gold. All rights reserved.</p>
+        <p>© 2025 Kishtwar Bloom. All rights reserved.</p>
         <div className="footer-policies">
           <a href="/privacy-policy">Privacy Policy</a>
           <a href="/terms-of-service">Terms of Service</a>

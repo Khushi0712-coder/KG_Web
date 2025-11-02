@@ -19,7 +19,7 @@ const About = () => {
         {/* Content */}
         <div className="container text-center hero-content">
           {/* Main Title */}
-          <h1 className="main-title">About Kishtwar Gold</h1>
+          <h1 className="main-title">About Kishtwar Bloom</h1>
 
           {/* Subtitle */}
           <h3 className="sub-title">A Legacy of Premium Saffron Excellence</h3>

@@ -130,7 +130,7 @@ export default router;
 //         </div>
 
 //         <div style="background-color: #f1f1f1; padding: 10px 20px; text-align: center; font-size: 12px; color: #777;">
-//           Kishtwar Gold &copy; ${new Date().getFullYear()}
+//           Kishtwar Bloom &copy; ${new Date().getFullYear()}
 //         </div>
 //       </div>
 //     `;

@@ -1,7 +1,7 @@
 {
   "name": "kishtwar-backend",
   "version": "1.0.0",
-  "description": "Backend for Kishtwar Gold ecommerce app",
+  "description": "Backend for Kishtwar Bloom ecommerce app",
   "main": "server.js",
   "type": "module",
   "scripts": {

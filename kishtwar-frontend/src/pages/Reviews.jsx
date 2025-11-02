@@ -62,7 +62,7 @@ const Review = () => {
         <div className="container text-center hero-content">
           <h1 className="main-title">Customer Reviews</h1>
           <h3 className="sub-title">
-            What our customers say about Kishtwar Gold
+            What our customers say about Kishtwar Bloom
           </h3>
         </div>
       </section>
@@ -154,7 +154,7 @@ const Review = () => {
                   </div>
                   <div className="stars">★★★★★</div>
                   <p className="text-muted">
-                    "As a professional chef, I demand the best ingredients. Kishtwar Gold delivers authentic saffron that elevates every dish."
+                    "As a professional chef, I demand the best ingredients. Kishtwar Bloom delivers authentic saffron that elevates every dish."
                   </p>
                   <p className="verified">
                     <i className="fas fa-check-circle"></i> Verified Purchase
@@ -215,7 +215,7 @@ const Review = () => {
         <div className="card p-4 shadow border-0 rounded-4">
           <h2 className="fw-bold mb-3 text-center">Share Your Experience</h2>
           <p className="text-muted text-center mb-4">
-            Help other customers by sharing your experience with Kishtwar Gold
+            Help other customers by sharing your experience with Kishtwar Bloom
             saffron.
           </p>
 

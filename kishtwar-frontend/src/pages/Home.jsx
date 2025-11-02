@@ -112,7 +112,7 @@ const Home = () => {
           <span className="tagline-badge mb-3">
             GI TAGGED AUTHENTIC SAFFRON
           </span>
-          <h1 className="main-title">KISHTWAR GOLD</h1>
+          <h1 className="main-title">KISHTWAR BLOOM</h1>
           <h3 className="sub-title">The Pride of Pure Saffron</h3>
           <p className="hero-text">
             From the heart of Kishtwar, bringing purity and richness to your

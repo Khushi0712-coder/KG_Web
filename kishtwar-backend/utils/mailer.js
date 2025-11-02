@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 export const sendMail = async ({ to, subject, text, html }) => {
   try {
     const info = await transporter.sendMail({
-      from: `"Kishtwar Gold" <${process.env.ZOHO_EMAIL}>`,
+      from: `"Kishtwar Bloom" <${process.env.ZOHO_EMAIL}>`,
       to,
       subject,
       text,
